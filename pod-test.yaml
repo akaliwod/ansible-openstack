@@ -10,6 +10,6 @@
     cloud_name: denver
 
   roles:
-    - openstack-test
+    - { role: "openstack-test" }
 
 ...
