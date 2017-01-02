@@ -1,0 +1,18 @@
+---
+
+# Flavor
+
+flavors:
+  tiny:
+    name: tiny.18b74a8c-9fba-4289-9bb5-803b9016a69d
+    ram: 1024
+    vcpus: 1
+    disk: 10
+    ephemeral: 0
+  large:
+    name: large.42644636-0002-42f3-a53d-ddb9d4f64fc3
+    ram: 8192
+    vcpus: 4
+    disk: 80
+    ephemeral: 0
+
