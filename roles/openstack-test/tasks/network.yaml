@@ -1,0 +1,48 @@
+---
+
+# Ansible role to test basic tasks in OpenStack
+#
+
+- name: Create networks 
+  os_network:
+    cloud: "{{ cloud_name }}"
+    state: present
+    name: "{{ item.value.name }}"
+    provider_physical_network: "{{ item.value.provider_physical_network | default(omit) }}"
+    provider_network_type: "{{ item.value.provider_network_type | default(omit) }}"
+    provider_segmentation_id: "{{ item.value.provider_segmentation_id | default(omit) }}"
+    shared: "{{ item.value.shared }}"
+    external: "{{ item.value.external | default(omit) }}"
+  with_dict: "{{ networks }}"
+
+- name: Create subnets 
+  os_subnet:
+    cloud: "{{ cloud_name }}"
+    state: present
+    ip_version: 4
+    network_name: "{{ item.value.name }}"
+    name: "{{ item.value.name }}-subnet"
+    cidr: "{{ item.value.cidr }}"
+    enable_dhcp: "{{ item.value.enable_dhcp | default(omit) }}"
+    gateway_ip: "{{ item.value.gateway_ip | default(omit) }}"
+    no_gateway_ip: "{{ item.value.no_gateway_ip | default(omit) }}"
+    allocation_pool_start: "{{ item.value.allocation_pool_start | default(omit) }}"
+    allocation_pool_end: "{{ item.value.allocation_pool_end | default(omit) }}"
+    dns_nameservers: "{{ item.value.dns_nameservers | default(omit) }}"
+  with_dict: "{{ networks }}"
+
+- name: Delete subnets
+  os_subnet:
+    cloud: "{{ cloud_name }}"
+    state: absent
+    name: "{{ item.value.name }}-subnet"
+  with_dict: "{{ networks }}"
+
+- name: Delete networks
+  os_network:
+    cloud: "{{ cloud_name }}"
+    state: absent
+    name: "{{ item.value.name }}"
+  with_dict: "{{ networks }}"
+
+...
