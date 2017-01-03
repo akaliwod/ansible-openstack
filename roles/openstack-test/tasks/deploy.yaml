@@ -1,0 +1,8 @@
+---
+
+- include: flavor.yaml
+- include: network.yaml
+- include: glance.yaml
+- include: nova.yaml
+
+...

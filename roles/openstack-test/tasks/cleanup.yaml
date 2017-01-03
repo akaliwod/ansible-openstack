@@ -1,0 +1,36 @@
+---
+
+- name: Delete VM
+  os_server:
+    cloud: "{{ cloud_name }}"
+    state: absent
+    name: "{{ instance.name }}"
+
+- name: Delete test subnets
+  os_subnet:
+    cloud: "{{ cloud_name }}"
+    state: absent
+    name: "{{ item.value.name }}-subnet"
+  with_dict: "{{ networks }}"
+
+- name: Delete test networks
+  os_network:
+    cloud: "{{ cloud_name }}"
+    state: absent
+    name: "{{ item.value.name }}"
+  with_dict: "{{ networks }}"
+
+- name: "Delete test flavors"
+  os_nova_flavor:
+    cloud: "{{ cloud_name }}"
+    state: absent
+    name: "{{ item.value.name }}"
+  with_dict: "{{ flavors }}"
+
+- name: Delete glance image
+  os_image:
+    cloud: "{{ cloud_name }}"
+    state: absent
+    name: "{{ image.name }}"
+
+...
