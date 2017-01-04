@@ -5,6 +5,8 @@
     cloud: "{{ cloud_name }}"
     state: absent
     name: "{{ instance.name }}"
+  tags:
+    - nova
 
 - name: Delete test subnets
   os_subnet:
@@ -12,6 +14,8 @@
     state: absent
     name: "{{ item.value.name }}-subnet"
   with_dict: "{{ networks }}"
+  tags:
+    - network
 
 - name: Delete test networks
   os_network:
@@ -19,6 +23,8 @@
     state: absent
     name: "{{ item.value.name }}"
   with_dict: "{{ networks }}"
+  tags:
+    - network
 
 - name: "Delete test flavors"
   os_nova_flavor:
@@ -26,11 +32,15 @@
     state: absent
     name: "{{ item.value.name }}"
   with_dict: "{{ flavors }}"
+  tags:
+    - flavor
 
 - name: Delete glance image
   os_image:
     cloud: "{{ cloud_name }}"
     state: absent
     name: "{{ image.name }}"
+  tags:
+    - image
 
 ...

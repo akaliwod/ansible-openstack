@@ -1,8 +1,12 @@
 ---
 
 - include: flavor.yaml
+  tags: [flavor]
 - include: network.yaml
+  tags: [network]
 - include: glance.yaml
+  tags: [glance]
 - include: nova.yaml
+  tags: [nova]
 
 ...

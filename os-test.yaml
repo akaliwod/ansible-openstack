@@ -11,6 +11,20 @@
 
   roles:
     - { role: "openstack-test", ACTION: start }
+
+  tags:
+    - start
+
+- name: Cleanup
+  hosts: local
+  gather_facts: False
+  vars:
+    cloud_name: denver
+
+  roles:
     - { role: "openstack-test", ACTION: stop }
+
+  tags:
+    - stop
 
 ...
