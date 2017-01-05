@@ -1,0 +1,35 @@
+---
+
+- name: get the username running the deploy
+  local_action: command whoami
+  register: current_user
+
+- debug: var=current_user
+
+- name: check if SSH key is already defined
+  stat:
+    path: /{{ current_user.stdout }}/.ssh/id_rsa_ansible.pub
+  register: is_key
+
+- debug: 
+    msg: "SSH key already exists"
+  when: is_key.stat.exists == True
+
+- name: Create SSH keys for current user
+  command: "ssh-keygen -N '' -f /{{ current_user.stdout }}/.ssh/id_rsa_ansible"
+  when: is_key.stat.exists == False
+
+- name: Delete OpenStack key pair using current user's info - otherwise corner case key hash check fails (if pubkey changes)
+  os_keypair:
+    cloud: "{{ cloud_name }}"
+    state: absent
+    name: "{{ ansible_key }}"
+
+- name: Create OpenStack key pair using current user's info
+  os_keypair:
+    cloud: "{{ cloud_name }}"
+    state: present
+    name: "{{ ansible_key }}"
+    public_key_file: "{{ '~' | expanduser }}/.ssh/id_rsa_ansible.pub"
+
+...

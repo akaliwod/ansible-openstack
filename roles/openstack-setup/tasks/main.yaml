@@ -1,0 +1,30 @@
+---
+
+- include_vars: /ansible/playbooks/setup.yaml
+  tags:
+    - always
+
+- debug:
+    msg: "Variable files loaded: {{ title }}"
+  tags:
+    - always
+
+- include: flavor.yaml
+  tags: [flavor]
+
+- include: glance.yaml
+  tags: [glance]
+
+- include: network.yaml
+  tags: [network]
+
+- include: attach_network.yaml
+  tags: [attach]
+
+- include: security_group.yaml
+  tags: [sg]
+
+- include: keypair.yaml
+  tags: [key]
+
+...

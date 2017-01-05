@@ -1,0 +1,4 @@
+git clone https://github.com/akaliwod/ansible-openstack
+
+git commit -a
+git push

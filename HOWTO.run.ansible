@@ -1,0 +1,18 @@
+How to use Ansible container
+============================
+
+docker pull index.docker.io/akaliwod/ansible:v1
+
+docker run -h ansible --rm -it --privileged=true \
+	-v /root/demo/ansible/ansible-openstack:/ansible/playbooks docker.io/akaliwod/ansible:v1 /bin/bash
+
+inside container
+
+cd /ansible/playbooks
+
+ansible-playbook os-test-setup.yaml 
+ansible-playbook os-test-setup.yaml --tags=flavor
+
+ansible-playbook os-test-cleanup.yaml
+ansible-playbook os-test-cleanup.yaml --tags=flavor
+

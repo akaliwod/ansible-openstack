@@ -1,0 +1,15 @@
+---
+
+# Ansible playbook to test operations on the target POD
+#
+
+- name: Cleanup
+  hosts: local
+  gather_facts: False
+  vars:
+    cloud_name: paris
+
+  roles:
+    - { role: "openstack-cleanup" }
+
+...

@@ -1,0 +1,58 @@
+---
+
+- name: Delete security group
+  os_security_group:
+    cloud: "{{ cloud_name }}"
+    state: absent
+    name: "{{ security_group }}"
+  tags:
+    - sg
+
+- name: Delete keypair
+  os_keypair:
+    cloud: "{{ cloud_name }}"
+    state: absent
+    name: "{{ ansible_key }}"
+  tags:
+    - key
+
+- include: detach_network.yaml
+  tags: 
+    - detach
+
+- name: Delete test subnets
+  os_subnet:
+    cloud: "{{ cloud_name }}"
+    state: absent
+    name: "{{ item.value.name }}"
+  with_dict: "{{ networks }}"
+  tags:
+    - network
+
+- name: Delete test networks
+  os_network:
+    cloud: "{{ cloud_name }}"
+    state: absent
+    name: "{{ item.value.name }}"
+  with_dict: "{{ networks }}"
+  tags:
+    - network
+
+- name: Delete test flavors
+  os_nova_flavor:
+    cloud: "{{ cloud_name }}"
+    state: absent
+    name: "{{ item.value.name }}"
+  with_dict: "{{ flavors }}"
+  tags:
+    - flavor
+
+- name: Delete glance image
+  os_image:
+    cloud: "{{ cloud_name }}"
+    state: absent
+    name: "{{ image.name }}"
+  tags:
+    - image
+
+...

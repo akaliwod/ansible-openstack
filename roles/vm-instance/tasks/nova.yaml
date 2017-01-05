@@ -1,0 +1,120 @@
+---
+
+- name: Get network details by name references
+  os_networks_facts:
+    cloud: "{{ cloud_name }}"
+    filters:
+      name: "{{ item }}"
+  register: nets
+  with_items:
+    - "{{ instance.management_net }}"
+    - "{{ instance.inside_net }}"
+    - "{{ instance.outside_net }}"
+  loop_control:
+    label: "{{ item }}"
+
+- name: Get network UUID
+  set_fact:
+    network_id: "{{ network_id | default({}) | combine( {item.item: item.ansible_facts.openstack_networks[0].id} ) }}"
+  with_items: "{{ nets.results }}"
+  loop_control:
+    label: "{{ item.item }}"  
+
+- name: Print network UUID
+  debug:
+    var: network_id
+
+- name: Launch instance
+  os_server:
+    cloud: "{{ cloud_name }}"
+    state: present
+    name: "{{ instance.name }}"
+    image: "{{ instance.image }}"
+    key_name: "{{ ansible_key }}"
+    security_groups: "{{ security_group }}"
+    flavor: "{{ instance.flavor }}"
+    auto_ip: False
+    config_drive: True
+    userdata: "{{ instance.userdata | default(omit) }}"
+    nics:
+      - net-id: "{{ network_id[instance.management_net] }}"
+        v4-fixed-ip: "{{ instance.management_ip | default({}) }}"
+      - net-id: "{{ network_id[instance.inside_net] }}"
+        v4-fixed-ip: "{{ instance.inside_ip | default({}) }}"
+      - net-id: "{{ network_id[instance.outside_net] }}"
+        v4-fixed-ip: "{{ instance.outside_ip | default({}) }}"
+  register: instance_created
+
+- name: Give instance some time to launch
+  pause:
+    seconds: 5
+  when: instance_created.changed
+
+- name: Get instance info
+  os_server_facts:
+    cloud: "{{ cloud_name }}"
+    server: "{{ instance.name }}"
+
+- name: Print instance info
+  debug:
+    var: openstack_servers
+
+- name: Prepare for floating IP check
+  set_fact:
+    fip_exists: False
+
+- name: Check if floating IP already assigned (by checking if management network has 2nd IP address defined)
+  set_fact:
+    fip_exists: True
+  when: instance.assign_floating_ip and openstack_servers[0].networks[instance.management_net][1] is defined
+
+- name: Print Floating IP check information
+  debug:
+    var: fip_exists
+  when: instance.assign_floating_ip
+
+- name: Add floating IP to instance (if not already defined)
+  os_floating_ip:
+    cloud: "{{ cloud_name }}"
+    state: present
+    reuse: Yes
+    server: "{{ instance.name }}"
+    network: "{{ pod.floating_network }}"
+    fixed_address: "{{ instance_created.server.networks[instance.management_net][0] }}"
+  when: instance.assign_floating_ip and not fip_exists
+  register: results
+  changed_when: results.failed is not defined
+
+- name: Get port information
+  os_port_facts:
+    cloud: "{{ cloud_name }}"
+    filters:
+      status: ACTIVE
+      device_id: "{{ openstack_servers[0].id }}"
+
+- name: Update allowed_address_pairs on instance ports
+  os_port:
+    cloud: "{{ cloud_name }}"
+    state: present
+    name: "{{ item.id }}"
+    allowed_address_pairs:
+      - ip_address: "0.0.0.0/0"
+  with_items: "{{ openstack_ports }}"
+  loop_control:
+    label: "{{ item.fixed_ips[0].ip_address }}"
+  register: ports
+
+- name: Get instance info
+  os_server_facts:
+    cloud: "{{ cloud_name }}"
+    server: "{{ instance.name }}"
+
+- name: Show assigned floating IP address
+  debug:
+    msg: "{{ openstack_servers[0].networks[instance.management_net][1] }}"
+  when: instance.assign_floating_ip
+  ignore_errors: True
+
+- include: instance_ping.yaml
+
+...

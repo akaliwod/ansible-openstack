@@ -1,0 +1,45 @@
+---
+
+- name: Get OpenStack authentication info
+  # info returned is stored in openstack.clouds
+  os_client_config:
+    clouds: "{{ cloud_name }}"
+
+- name: Get management network details
+  os_networks_facts:
+    cloud: "{{ cloud_name }}"
+    name: "{{ networks.management.name }}"
+
+- name: Print management network details
+  debug:
+    var: openstack_networks
+
+- name: Check if network is attached to router (to avoid error when removing)
+  shell: "neutron router-port-list {{ pod.router }} | grep {{ openstack_networks[0].subnets[0] }} | wc -l"
+  environment:
+    OS_AUTH_URL: "{{ item.auth.auth_url }}"
+    OS_USERNAME: "{{ item.auth.username }}"
+    OS_PASSWORD: "{{ item.auth.password }}"
+    OS_TENANT_NAME: "{{ item.auth.project_name }}"
+    OS_REGION_NAME: "{{ item.region_name}}"
+  with_items: "{{ openstack.clouds }}"
+  register: attach_check
+  when: openstack_networks[0] is defined
+
+- name: Network is not added to router
+  debug:
+    msg: Network is not added to router (no action needed)
+  when: attach_check is defined and attach_check.results[0].stdout == "0"
+
+- name: Delete management network from router
+  command: neutron router-interface-delete {{ pod.router }} {{ networks.management.name }}
+  environment:
+    OS_AUTH_URL: "{{ item.auth.auth_url }}"
+    OS_USERNAME: "{{ item.auth.username }}"
+    OS_PASSWORD: "{{ item.auth.password }}"
+    OS_TENANT_NAME: "{{ item.auth.project_name }}"
+    OS_REGION_NAME: "{{ item.region_name}}"
+  with_items: "{{ openstack.clouds }}"
+  when: attach_check is defined and attach_check.results[0].stdout == "1"
+
+...

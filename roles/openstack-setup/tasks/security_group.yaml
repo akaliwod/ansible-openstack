@@ -1,0 +1,26 @@
+---
+
+- name: Create new security group
+  os_security_group:
+    cloud: "{{ cloud_name }}"
+    state: present
+    name: "{{ security_group }}"
+    description: Allows all ingress/egress traffic
+
+- name: Update security group rules for group
+  os_security_group_rule:
+    cloud: "{{ cloud_name }}"
+    state: present
+    security_group: "{{ security_group }}"
+    protocol: "{{ item.protocol }}"
+    direction: "{{ item.direction }}"
+    remote_ip_prefix: 0.0.0.0/0
+  with_items:
+    - { protocol: icmp, direction: ingress }
+    - { protocol: icmp, direction: egress }
+    - { protocol: tcp, direction: ingress }
+    - { protocol: tcp, direction: egress }
+    - { protocol: udp, direction: ingress }
+    - { protocol: udp, direction: egress }
+
+...
