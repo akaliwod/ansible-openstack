@@ -24,11 +24,12 @@
     OS_REGION_NAME: "{{ item.region_name }}"
   with_items: "{{ openstack.clouds }}"
   register: attach_check
+  when: networks.management.attach_router is defined and networks.management.attach_router == True
 
 - name: Network already added to router
   debug:
     msg: Network already added to router
-  when: attach_check.results[0].stdout == "1"
+  when: networks.management.attach_router is defined and networks.management.attach_router == True and attach_check.results[0].stdout == "1"
 
 - name: Add management network to router
   command: neutron router-interface-add {{ pod.router }} {{ networks.management.name }}
@@ -39,6 +40,6 @@
     OS_TENANT_NAME: "{{ item.auth.project_name }}"
     OS_REGION_NAME: "{{ item.region_name}}"
   with_items: "{{ openstack.clouds }}"
-  when: attach_check.results[0].stdout == "0"
+  when: networks.management.attach_router is defined and networks.management.attach_router == True and attach_check.results[0].stdout == "0"
 
 ...

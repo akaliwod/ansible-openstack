@@ -6,8 +6,8 @@
 - name: Create test instance
   hosts: local
   gather_facts: False
-  vars:
-    cloud_name: paris
+  vars_files:
+    - /ansible/playbooks/setup.yaml
 
   roles:
     - { role: "instance-delete" }

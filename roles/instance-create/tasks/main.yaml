@@ -1,9 +1,5 @@
 ---
 
-- include_vars: /ansible/playbooks/setup.yaml
-  tags:
-    - always
-
 - debug:
     msg: "Variable files loaded: {{ title }}"
   tags:

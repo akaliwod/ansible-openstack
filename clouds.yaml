@@ -6,6 +6,13 @@ clouds:
       username: admin
       password: f4LYRCP4PLLmEjx9
     region_name: RegionOne
+  paris-custA:
+    auth:
+      auth_url: http://192.168.4.10:5000/v2.0
+      project_name: admin
+      username: admin
+      password: cisco
+    region_name: RegionOne
   denver:
     auth:
       auth_url: http://10.94.159.129:5000/v2.0

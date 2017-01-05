@@ -1,0 +1,74 @@
+---
+
+title: "Setup NFVI POD OpenStack Environment - Customer POD A with VTS"
+
+cloud_name: paris-custA
+
+pod:
+  router: none
+  floating_network: none
+
+flavors:
+  tiny:
+    name: tiny.18b74a8c-9fba-4289-9bb5-803b9016a69d
+    ram: 1024
+    vcpus: 1
+    disk: 10
+    ephemeral: 0
+  large:
+    name: large.42644636-0002-42f3-a53d-ddb9d4f64fc3
+    ram: 8192
+    vcpus: 4
+    disk: 80
+    ephemeral: 0
+
+networks:
+  management:
+    name: management.f06450b0-8ed7-4330-8a02-8d590d7f8f90
+    provider_network_type: vlan
+    provider_physical_network: physnet1
+    shared: True
+    cidr: 192.168.66.0/24
+    gateway_ip: 192.168.66.1
+    enable_dhcp: False
+    attach_router: False
+  inside:
+    name: inside.f06450b0-8ed7-4330-8a02-8d590d7f8f90
+    provider_network_type: vlan
+    provider_physical_network: physnet1
+    shared: True
+    cidr: 192.168.67.0/24
+    gateway_ip: 192.168.67.1
+    enable_dhcp: False
+  outside:
+    name: outside.f06450b0-8ed7-4330-8a02-8d590d7f8f90
+    provider_network_type: vlan
+    provider_physical_network: physnet1
+    shared: True
+    cidr: 192.168.68.0/24
+    gateway_ip: 192.168.68.1
+    enable_dhcp: False
+
+image:
+  name: cirros.7c251177-1404-4346-af9a-039496232b6c
+  disk_format: qcow2
+  container_format: bare
+  filename: cirros-0.3.4-x86_64-disk.img
+  download_url: http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img
+
+security_group: sg.18b74a8c-9fba-4289-9bb5-803b9016a69d
+
+ansible_key: ansible18b74a8c-9fba-4289-9bb5-803b9016a69d
+
+instance:
+  name: cirros.7c251177-1404-4346-af9a-039496232b6c
+  image: cirros.7c251177-1404-4346-af9a-039496232b6c
+  flavor: tiny.18b74a8c-9fba-4289-9bb5-803b9016a69d
+  management_net: management.f06450b0-8ed7-4330-8a02-8d590d7f8f90
+  management_ip: 192.168.66.130
+  assign_floating_ip: False
+  inside_net: inside.f06450b0-8ed7-4330-8a02-8d590d7f8f90
+  inside_ip: 192.168.67.130
+  outside_net: outside.f06450b0-8ed7-4330-8a02-8d590d7f8f90
+  outside_ip: 192.168.68.130
+ 
