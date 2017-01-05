@@ -1,0 +1,40 @@
+---
+
+- include: get_network.yaml
+
+- name: Launch instance
+  os_server:
+    cloud: "{{ cloud_name }}"
+    state: present
+    name: "{{ instance.name }}"
+    image: "{{ instance.image }}"
+    key_name: "{{ ansible_key }}"
+    security_groups: "{{ security_group }}"
+    flavor: "{{ instance.flavor }}"
+    auto_ip: False
+    config_drive: True
+    userdata: "{{ instance.userdata | default(omit) }}"
+    nics:
+      - net-id: "{{ network_id[instance.management_net] }}"
+        v4-fixed-ip: "{{ instance.management_ip | default({}) }}"
+      - net-id: "{{ network_id[instance.inside_net] }}"
+        v4-fixed-ip: "{{ instance.inside_ip | default({}) }}"
+      - net-id: "{{ network_id[instance.outside_net] }}"
+        v4-fixed-ip: "{{ instance.outside_ip | default({}) }}"
+  register: instance_created
+
+- name: Give instance some time to launch
+  pause:
+    seconds: 5
+  when: instance_created.changed
+
+- name: Get instance info
+  os_server_facts:
+    cloud: "{{ cloud_name }}"
+    server: "{{ instance.name }}"
+
+- name: Print instance info
+  debug:
+    var: openstack_servers
+
+...

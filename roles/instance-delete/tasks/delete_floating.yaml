@@ -1,0 +1,26 @@
+---
+
+- name: Get instance info
+  os_server_facts:
+    cloud: "{{ cloud_name }}"
+    server: "{{ instance.name }}"
+
+- name: Prepare for floating IP check
+  set_fact:
+    fip_exists: False
+
+- name: Check if floating IP assigned (by checking if management network has 2nd IP address defined)
+  set_fact:
+    fip_exists: True
+  when: instance.assign_floating_ip and openstack_servers[0].networks[instance.management_net][1] is defined
+
+- name: Disassociate and delete floating IP from instance
+  os_floating_ip:
+    cloud: "{{ cloud_name }}"
+    state: absent
+    purge: yes
+    server: "{{ instance.name }}"
+    floating_ip_address: "{{ openstack_servers[0].networks[instance.management_net][1] }}"
+  when: instance.assign_floating_ip and fip_exists
+
+...

@@ -1,0 +1,14 @@
+---
+
+- include: create_vm.yaml
+
+- include: add_floating.yaml
+  when: instance.assign_floating_ip is defined and instance.assign_floating_ip == True
+
+- include: allowed_address_pairs.yaml
+
+- include: ping.yaml
+  when: instance.assign_floating_ip is defined and instance.assign_floating_ip == True
+
+...
+

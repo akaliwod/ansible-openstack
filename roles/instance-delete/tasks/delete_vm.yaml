@@ -1,0 +1,9 @@
+---
+
+- name: Delete instance
+  os_server:
+    cloud: "{{ cloud_name }}"
+    state: absent
+    name: "{{ instance.name }}"
+
+...

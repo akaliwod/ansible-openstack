@@ -1,0 +1,9 @@
+---
+
+- include: delete_floating.yaml
+  when: instance.assign_floating_ip is defined and instance.assign_floating_ip == True
+
+- include: delete_vm.yaml
+
+...
+
