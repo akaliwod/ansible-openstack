@@ -1,8 +1,0 @@
----
-
-- include: deploy.yaml
-  when: ACTION is defined and ACTION == "start"
-- include: cleanup.yaml
-  when: ACTION is defined and ACTION == "stop"
-
-...
