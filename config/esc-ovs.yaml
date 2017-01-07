@@ -1,0 +1,33 @@
+---
+
+image:
+  name: esc-demo
+  disk_format: qcow2
+  container_format: bare
+  source: file
+  filename: "/images/esc.img"
+  #source: url
+  #download_url: http://my-ucs-10:9090/release/esc/2.3/BUILD-2_3_1_64/ESC-2_3_1_64.tar.gz
+  #filename: esc.tar.gz
+
+flavor:
+  name: esc
+  ram: 8192
+  disk: 30
+  vcpus: 2
+  extra_specs:
+    hw:mem_page_size: 2048
+    hw:numa_nodes: 1
+
+esc:
+  bootvm: boot-esc.py # Make sure this file exists in files/ as there is no task to copy it there
+  name: esc-demo
+  run:
+    tenant: management
+    username: management
+    password: cisco
+  management_interface: management-net-0
+  management_address: 10.254.254.7
+  management_floating: 192.168.23.7
+  management_gateway: 10.254.254.254
+

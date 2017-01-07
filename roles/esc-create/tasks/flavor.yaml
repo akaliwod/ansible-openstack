@@ -1,0 +1,23 @@
+---
+
+- name: "Create ESC flavor" 
+  os_nova_flavor:
+    cloud: "{{ cloud_name }}"
+    state: present
+    name: "{{ flavor.name }}"
+    ram: "{{ flavor.ram }}"
+    vcpus: "{{ flavor.vcpus }}"
+    disk: "{{ flavor.disk }}"
+    ephemeral: "{{ flavor.ephemeral | default(omit) }}"
+    #extra_specs: "{{ flavor.extra_specs | default(omit) }}"
+
+- name: Gather ESC Flavor details
+  os_flavor_facts:
+    cloud: "{{ cloud_name }}"
+    name: "{{ flavor.name }}"
+
+- name: Show ESC flavor details
+  debug:
+    var: openstack_flavors
+
+...

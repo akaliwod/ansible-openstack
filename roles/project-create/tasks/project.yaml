@@ -1,0 +1,13 @@
+---
+
+# https://docs.ansible.com/ansible/os_project_module.html
+- name: "Create OpenStack project" 
+  os_project:
+    cloud: "{{ cloud_name }}"
+    state: present
+    name: "{{ item.key }}"
+    description: "{{ item.value.description | default(omit) }}"
+    enabled: "{{ item.value.enabled }}"
+  with_dict: "{{ projects }}"
+
+...

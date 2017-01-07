@@ -1,0 +1,27 @@
+---
+
+- name: Get instance info
+  os_server_facts:
+    cloud: "{{ cloud_name }}"
+    server: "{{ esc.name }}"
+
+- name: Get port information
+  os_port_facts:
+    cloud: "{{ cloud_name }}"
+    filters:
+      status: ACTIVE
+      device_id: "{{ openstack_servers[0].id }}"
+
+- name: Update allowed_address_pairs on instance ports
+  os_port:
+    cloud: "{{ cloud_name }}"
+    state: present
+    name: "{{ item.id }}"
+    allowed_address_pairs:
+      - ip_address: "0.0.0.0/0"
+  with_items: "{{ openstack_ports }}"
+  loop_control:
+    label: "{{ item.fixed_ips[0].ip_address }}"
+  register: ports
+
+...

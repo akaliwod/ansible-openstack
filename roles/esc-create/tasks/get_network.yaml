@@ -1,0 +1,28 @@
+---
+
+- name: Get network details by name references
+  os_networks_facts:
+    cloud: "{{ cloud_name }}"
+    filters:
+      name: "{{ item }}"
+  register: nets
+  with_items:
+    - "{{ instance.management_net }}"
+    - "{{ instance.inside_net }}"
+    - "{{ instance.outside_net }}"
+  loop_control:
+    label: "{{ item }}"
+
+- name: Get network UUID
+  set_fact:
+    network_id: "{{ network_id | default({}) | combine( {item.item: item.ansible_facts.openstack_networks[0].id} ) }}"
+  with_items: "{{ nets.results }}"
+  loop_control:
+    label: "{{ item.item }}"  
+
+- name: Print network UUID
+  debug:
+    var: network_id
+
+...
+

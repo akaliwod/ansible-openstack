@@ -1,0 +1,32 @@
+---
+
+projects:
+  demo1:
+    enabled: True
+    description: "project - demo1"
+  demo2:
+    enabled: False
+    description: "project demo2"
+
+users:
+  user1:
+    password: pass1
+    project: demo1
+    enabled: True
+    role_admin: False
+    openrc: True
+    openrc_name: openrc-demo1
+  user2:
+    password: pass2
+    project: demo1
+    enabled: True
+    role_admin: True
+    openrc: False
+  user3:
+    password: pass3
+    project: demo2
+    enabled: True
+    role_admin: False
+    openrc: False
+
+...

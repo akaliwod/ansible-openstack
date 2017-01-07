@@ -1,0 +1,16 @@
+---
+
+# Ansible playbook to create ESC instance in NFVI POD
+#
+
+- name: Create ESC instance
+  hosts: local
+  gather_facts: False
+  vars_files:
+    - /ansible/playbooks/config/setup.yaml
+    - /ansible/playbooks/config/esc.yaml
+
+  roles:
+    - { role: "esc-create" }
+
+...

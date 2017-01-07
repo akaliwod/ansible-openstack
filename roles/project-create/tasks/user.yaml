@@ -1,0 +1,37 @@
+---
+
+# https://docs.ansible.com/ansible/os_user_module.html
+- name: "Create OpenStack user" 
+  os_user:
+    cloud: "{{ cloud_name }}"
+    state: present
+    name: "{{ item.key }}"
+    password: "{{ item.value.password }}"
+    description: "{{ item.value.description | default(omit) }}"
+    email: "{{ item.value.email | default(omit) }}"
+    enabled: "{{ item.value.enabled }}"
+    default_project: "{{ item.value.project }}"
+  with_dict: "{{ users }}"
+
+# https://docs.ansible.com/ansible/os_user_role_module.html
+- name: "Add admin role"
+  os_user_role:
+    cloud: "{{ cloud_name }}"
+    state: present
+    user: "{{ item.key }}"
+    role: admin
+    project: "{{ item.value.project }}"
+  with_dict: "{{ users }}"
+  when: item.value.role_admin == True
+
+- name: "Remove admin role"
+  os_user_role:
+    cloud: "{{ cloud_name }}"
+    state: absent
+    user: "{{ item.key }}"
+    role: admin
+    project: "{{ item.value.project }}"
+  with_dict: "{{ users }}"
+  when: item.value.role_admin == False
+
+...

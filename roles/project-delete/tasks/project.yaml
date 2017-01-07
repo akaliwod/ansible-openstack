@@ -1,0 +1,11 @@
+---
+
+# https://docs.ansible.com/ansible/os_project_module.html
+- name: "Delete OpenStack project" 
+  os_project:
+    cloud: "{{ cloud_name }}"
+    state: absent
+    name: "{{ item.key }}"
+  with_dict: "{{ projects }}"
+
+...

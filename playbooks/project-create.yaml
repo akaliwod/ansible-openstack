@@ -1,0 +1,16 @@
+---
+
+# Ansible playbook to create projects, users and assign roles in NFVI POD
+#
+
+- name: Create OpenStack projects/users/roles
+  hosts: local
+  gather_facts: False
+  vars_files:
+    - /ansible/playbooks/config/setup.yaml
+    - /ansible/playbooks/config/projects.yaml
+
+  roles:
+    - { role: "project-create" }
+
+...

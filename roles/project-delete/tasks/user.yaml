@@ -1,0 +1,23 @@
+---
+
+# https://docs.ansible.com/ansible/os_user_role_module.html
+- name: "Remove admin role"
+  os_user_role:
+    cloud: "{{ cloud_name }}"
+    state: absent
+    user: "{{ item.key }}"
+    role: admin
+    project: "{{ item.value.project }}"
+  with_dict: "{{ users }}"
+  when: item.value.role_admin == True
+  ignore_errors: True # in case user no longer exists
+
+# https://docs.ansible.com/ansible/os_user_module.html
+- name: "Delete OpenStack user" 
+  os_user:
+    cloud: "{{ cloud_name }}"
+    state: absent
+    name: "{{ item.key }}"
+  with_dict: "{{ users }}"
+
+...

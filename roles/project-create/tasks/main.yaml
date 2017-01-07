@@ -1,0 +1,14 @@
+---
+
+- debug:
+    msg: "Variable files loaded: {{ title }}"
+  tags:
+    - always
+
+- include: project.yaml
+  tags: [project]
+
+- include: user.yaml
+  tags: [user]
+
+...

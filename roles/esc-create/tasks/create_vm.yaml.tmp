@@ -1,0 +1,42 @@
+---
+
+- name: Get OpenStack auth info
+  os_client_config:
+    clouds: "{{ cloud_name }}"
+
+- name: Launch ESC instance
+  shell: >
+    ./{{ esc.bootvm }} {{ esc.name }}
+    --bs_os_tenant_name management 
+    --bs_os_username management 
+    --bs_os_password cisco 
+    --bs_os_auth_url http://192.168.22.10:5000/v2.0
+    --os_tenant_name admin 
+    --os_username admin 
+    --os_password f4LYRCP4PLLmEjx9
+    --os_auth_url http://192.168.22.10:5000/v2.0
+    --flavor {{ flavor.name }} 
+    --image {{ image.name }}
+    --net {{ esc.management_interface }}
+    --gateway_ip {{ esc.management_gateway }} 
+    --enable-http-rest 
+    --enable-https-rest 
+    --user_pass admin:cisco
+    --esc_ui_startup true
+  args:
+    #lookup current directory and chdir to it since this is executed from a role
+    #    --ipaddr {{ esc.management_address }}
+    #needed because we're using shell/command module and it doesn't get current working dir
+    chdir: "{{ file_path }}"
+  register: esc_instance
+  with_items: "{{ openstack.clouds }}"
+  changed_when: esc_instance.rc == 0
+  failed_when: "esc_instance.rc != 0 and 'already a server' not in esc_instance.stdout"
+  ignore_errors: True
+
+- name: Give instance some time to launch (5 sec)
+  pause:
+    seconds: 5
+    when: esc_instance.changed
+
+...

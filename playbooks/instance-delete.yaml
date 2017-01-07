@@ -7,9 +7,9 @@
   hosts: local
   gather_facts: False
   vars_files:
-    - /ansible/playbooks/setup.yaml
+    - /ansible/playbooks/config/setup.yaml
 
   roles:
-    - { role: "instance-create" }
+    - { role: "instance-delete" }
 
 ...

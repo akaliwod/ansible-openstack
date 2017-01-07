@@ -1,0 +1,28 @@
+---
+
+- name: Download ESC image via URL
+  get_url:
+    url: "{{ image.download_url }}"
+    dest: "{{ image.filename }}"
+  when: image.source == "url"
+
+- name: Upload ESC image to glance
+  os_image:
+    cloud: "{{ cloud_name }}"
+    state: present
+    name: "{{ image.name }}"
+    disk_format: "{{ image.disk_format }}"
+    container_format: "{{ image.container_format }}"
+    filename: "{{ image.filename }}"
+    properties: "{{ image.properties | default(omit) }}"
+
+- name: Gather Glance Image details
+  os_image_facts:
+    cloud: "{{ cloud_name }}"
+    image: "{{ image.name }}"
+
+- name: Show ESC image details
+  debug:
+    var: openstack_image
+
+...

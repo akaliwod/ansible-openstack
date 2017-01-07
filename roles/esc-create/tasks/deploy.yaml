@@ -1,0 +1,24 @@
+---
+
+#- include: flavor.yaml
+#  tags: [flavor]
+
+#- include: glance.yaml
+#  tags: [glance]
+
+- include: create_vm.yaml
+  tags: [boot]
+
+- include: add_floating.yaml
+  when: esc.management_floating is defined 
+  tags: [floating]
+
+- include: allowed_address_pairs.yaml
+  tags: [allowed]
+
+- include: ping.yaml
+  when: esc.management_floating is defined
+  tags: [ping]
+
+...
+

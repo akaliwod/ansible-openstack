@@ -1,0 +1,10 @@
+---
+
+- debug:
+    msg: "Variable files loaded: {{ title }}"
+  tags:
+    - always
+
+- include: deploy.yaml
+
+...
