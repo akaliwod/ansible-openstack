@@ -1,0 +1,10 @@
+---
+
+- name: "Remove openrc file"
+  file:
+    path: "{{ item.value.openrc_name }}"
+    state: absent
+  with_dict: "{{ users }}"
+  when: item.value.openrc == True
+
+...

@@ -1,0 +1,17 @@
+---
+
+- name: Get OpenStack auth info
+  os_client_config:
+    clouds: "{{ cloud_name }}"
+
+- name: "Create openrc file" 
+  template:
+    src: openrc.j2
+    dest: "{{ item.value.openrc_name }}"
+    owner: "{{ openrc.file_owner }}"
+    group: "{{ openrc.file_group }}"
+    mode: "0600"
+  with_dict: "{{ users }}"
+  when: item.value.openrc == True
+
+...

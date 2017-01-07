@@ -1,0 +1,6 @@
+export OS_AUTH_URL={{ openstack.clouds[0].auth.auth_url }}
+export OS_USERNAME={{ item.key }}
+export OS_PASSWORD={{ item.value.password }}
+export OS_PROJECT_NAME={{ item.value.project }}
+export OS_TENANT_NAME={{ item.value.project }}
+export OS_REGION_NAME={{ openstack.clouds[0].region_name }}

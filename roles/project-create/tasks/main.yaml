@@ -11,4 +11,7 @@
 - include: user.yaml
   tags: [user]
 
+- include: openrc.yaml
+  tags: [openrc]
+
 ...
